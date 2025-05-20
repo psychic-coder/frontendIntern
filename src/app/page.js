@@ -27,6 +27,9 @@ const Home = () => {
 
   const theme = useSelector((state) => state.theme.theme);
   
+
+  const thirdComponentRef = React.useRef(null);
+  
   return (
     <div className={`h-screen w-full grid ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} ${showChat ? 'grid-cols-3' : 'grid-cols-2'} grid-flow-col overflow-hidden relative transition-all duration-500`}>
      
@@ -55,11 +58,11 @@ const Home = () => {
         <FirstComponent onChatSelect={handleChatSelect} />
       </motion.div>
       
-    
+   
       <AnimatePresence mode="wait">
         {showChat ? (
           <>
-           
+          
             <SecondComponent onClose={handleCloseChat} />
             
            
@@ -67,16 +70,25 @@ const Home = () => {
               key="third-with-chat"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
+              exit={{ opacity: 0 }}
               transition={{ 
                 type: "spring", 
                 stiffness: 100, 
-                damping: 20, 
+                damping: 20,
                 delay: 0.2 
               }}
               className="col-span-1"
             >
-              <ThirdComponent />
+            
+              {thirdComponentRef.current ? 
+                React.cloneElement(thirdComponentRef.current) : 
+                <ThirdComponent ref={(el) => {
+                 
+                  if (!thirdComponentRef.current) {
+                    thirdComponentRef.current = <ThirdComponent />;
+                  }
+                }} />
+              }
             </motion.div>
           </>
         ) : (
@@ -84,7 +96,7 @@ const Home = () => {
             key="third-full"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={{ opacity: 0 }}
             transition={{ 
               type: "spring", 
               stiffness: 100, 
@@ -92,7 +104,16 @@ const Home = () => {
             }}
             className="col-span-1"
           >
-            <ThirdComponent />
+           
+            {thirdComponentRef.current ? 
+              React.cloneElement(thirdComponentRef.current) : 
+              <ThirdComponent ref={(el) => {
+             
+                if (!thirdComponentRef.current) {
+                  thirdComponentRef.current = <ThirdComponent />;
+                }
+              }} />
+            }
           </motion.div>
         )}
       </AnimatePresence>
